@@ -1,7 +1,7 @@
 // components/CalendarGrid.jsx
 import { useState } from 'react';
 import { STATUS_COLOR } from '../backend/shared/enum/list.js';
-
+import { getHolidaysForMonth } from '../backend/shared/enum/holidays.js';
 function getDaysInMonth(year, month) {
   return new Date(year, month + 1, 0).getDate();
 }
@@ -23,7 +23,12 @@ export function CalendarGrid({ tasks, onUpdate }) {
   const [year,  setYear]  = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
   const [selectedDay, setSelectedDay] = useState(null);
-
+  const holidays=getHolidaysForMonth(year,month)
+  const holidaysByDay=holidays.reduce((acc,h)=>{
+    if(!acc[h.day]) acc[h.day]=[]
+    acc[h.day].push(h.name)
+    return acc
+  },{})
   const daysInMonth  = getDaysInMonth(year, month);
   const firstWeekday = getFirstDayOfMonth(year, month);
 
@@ -87,6 +92,7 @@ export function CalendarGrid({ tasks, onUpdate }) {
 
           const dayTasks = tasksByDay[day] ?? [];
           const selected = selectedDay === day;
+          const dayHolidays=holidaysByDay[day]?? []
 
           return (
             <div
@@ -100,7 +106,12 @@ export function CalendarGrid({ tasks, onUpdate }) {
               onClick={() => setSelectedDay(selected ? null : day)}
             >
               <span className="calendar__day-num">{day}</span>
-
+              {dayHolidays.length>0 &&(
+                <span className='calendar__holiday-badge'>
+                  {dayHolidays[0].length>10?
+                  dayHolidays[0].slice(0,10)+'...':dayHolidays[0]}
+                </span>
+              )}
               {/* Her görev için renkli nokta */}
               <div className="calendar__dots">
                 {dayTasks.slice(0, 3).map(t => (
@@ -122,6 +133,9 @@ export function CalendarGrid({ tasks, onUpdate }) {
       {/* Seçili günün görevleri */}
       {selectedDay && (
         <div className="calendar__day-detail">
+          {holidaysByDay[selectedDay]?.map(name=>(
+            <div key={name} className='calendar__holiday-row'>🎌 {name}</div>
+          ))}
           <h3>
             {selectedDay} {MONTHS[month]} — {selectedTasks.length} görev
           </h3>
