@@ -1,0 +1,63 @@
+export const HOLIDAYS = [
+  { date: '01-01', name: 'Yılbaşı' },
+  { date: '04-23', name: 'Ulusal Egemenlik ve Çocuk Bayramı' },
+  { date: '05-01', name: 'Emek ve Dayanışma Günü' },
+  { date: '05-19', name: 'Atatürk\'ü Anma, Gençlik ve Spor Bayramı' },
+  { date: '07-15', name: 'Demokrasi ve Millî Birlik Günü' },
+  { date: '08-30', name: 'Zafer Bayramı' },
+  { date: '10-29', name: 'Cumhuriyet Bayramı' },
+];
+
+// Değişken tarihli dini bayramlar — yıla göre elle ekle
+export const HOLIDAYS_VARIABLE = [
+  // 2025
+  { date: '2025-03-30', name: 'Ramazan Bayramı' },
+  { date: '2025-03-31', name: 'Ramazan Bayramı' },
+  { date: '2025-04-01', name: 'Ramazan Bayramı' },
+  { date: '2025-06-06', name: 'Kurban Bayramı' },
+  { date: '2025-06-07', name: 'Kurban Bayramı' },
+  { date: '2025-06-08', name: 'Kurban Bayramı' },
+  { date: '2025-06-09', name: 'Kurban Bayramı' },
+  // 2026
+  { date: '2026-03-20', name: 'Ramazan Bayramı' },
+  { date: '2026-03-21', name: 'Ramazan Bayramı' },
+  { date: '2026-03-22', name: 'Ramazan Bayramı' },
+  {date:'2026-05-26',name:'Kurban Bayramı Arefe Günü'},
+  { date: '2026-05-27', name: 'Kurban Bayramı' },
+  { date: '2026-05-28', name: 'Kurban Bayramı' },
+  { date: '2026-05-29', name: 'Kurban Bayramı' },
+  { date: '2026-05-30', name: 'Kurban Bayramı' },
+
+  //Üniversite için
+
+  {date:'2026-06-20',name:'TYT Sınavı'},
+    {date:'2026-06-21',name:'AYT Sınavı'},
+  {date:'2026-06-15',name:'Sayısal Entegre Final Sınavı'},
+  {date:'2026-04-15',name:'Sayısal Entegre Vize Sınavı'},
+
+
+];
+
+/**
+ * Verilen yıl için o aya ait tatilleri döner
+ * @returns {{ day: number, name: string }[]}
+ */
+export function getHolidaysForMonth(year, month) {
+  const results = [];
+
+  // Sabit tatiller
+  HOLIDAYS.forEach(({ date, name }) => {
+    const [m, d] = date.split('-').map(Number);
+    if (m === month + 1) results.push({ day: d, name });
+  });
+
+  // Değişken tatiller
+  HOLIDAYS_VARIABLE.forEach(({ date, name }) => {
+    const d = new Date(date);
+    if (d.getFullYear() === year && d.getMonth() === month) {
+      results.push({ day: d.getDate(), name });
+    }
+  });
+
+  return results;
+}
